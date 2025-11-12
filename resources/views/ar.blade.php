@@ -53,11 +53,13 @@ function init() {
 
   // Bouton pour prendre photo
   document.getElementById('takePhoto').addEventListener('click', () => {
+    renderer.render(scene, camera); // s’assurer que tout est affiché
     renderer.domElement.toBlob(blob => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'ar_photo.png';
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        a.download = `ar_photo_${timestamp}.png`; // <-- backticks
       a.click();
     });
   });
@@ -71,20 +73,19 @@ function init() {
 
   // Activer caméra du smartphone
   navigator.mediaDevices.getUserMedia({
-    video: { facingMode: { ideal: "environment" } }, // caméra arrière
+    video: { facingMode: { ideal: "environment" } },
     audio: false
   })
   .then(stream => {
       const video = document.createElement('video');
       video.srcObject = stream;
+    video.autoplay = true;
+    video.muted = true;        // utile pour autoplay sur mobile
+    video.playsInline = true;  // pour mobile
+
+    // attendre que la vidéo soit prête
+    video.onloadedmetadata = () => {
       video.play();
-      video.style.position = 'absolute';
-      video.style.top = '0';
-      video.style.left = '0';
-      video.style.width = '100%';
-      video.style.height = '100%';
-      video.style.zIndex = '-1';
-      document.body.appendChild(video);
 
       // On peut créer un texture pour Three.js si on veut intégrer la vidéo
       const videoTexture = new THREE.VideoTexture(video);
@@ -92,14 +93,19 @@ function init() {
       videoTexture.magFilter = THREE.LinearFilter;
       videoTexture.format = THREE.RGBFormat;
 
-      // Exemple : mettre en fond de scène un plan avec la vidéo
+        // Créer un plan qui couvrira l’arrière-plan
       const geometry = new THREE.PlaneGeometry(2, 2);
       const material = new THREE.MeshBasicMaterial({ map: videoTexture });
       const plane = new THREE.Mesh(geometry, material);
       plane.position.z = -2;
       scene.add(plane);
     })
-    .catch(err => { console.error("Erreur caméra:", err); });
+.catch(err => {
+    console.error("Erreur caméra:", err);
+});
+
+
+
 }
 
 // Animation
