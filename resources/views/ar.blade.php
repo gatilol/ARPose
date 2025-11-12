@@ -70,8 +70,11 @@ function init() {
   });
 
   // Activer caméra du smartphone
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: { ideal: "environment" } }, // caméra arrière
+    audio: false
+  })
+  .then(stream => {
       const video = document.createElement('video');
       video.srcObject = stream;
       video.play();
@@ -82,6 +85,19 @@ function init() {
       video.style.height = '100%';
       video.style.zIndex = '-1';
       document.body.appendChild(video);
+
+      // On peut créer un texture pour Three.js si on veut intégrer la vidéo
+      const videoTexture = new THREE.VideoTexture(video);
+      videoTexture.minFilter = THREE.LinearFilter;
+      videoTexture.magFilter = THREE.LinearFilter;
+      videoTexture.format = THREE.RGBFormat;
+
+      // Exemple : mettre en fond de scène un plan avec la vidéo
+      const geometry = new THREE.PlaneGeometry(2, 2);
+      const material = new THREE.MeshBasicMaterial({ map: videoTexture });
+      const plane = new THREE.Mesh(geometry, material);
+      plane.position.z = -2;
+      scene.add(plane);
     })
     .catch(err => { console.error("Erreur caméra:", err); });
 }
