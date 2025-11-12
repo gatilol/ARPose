@@ -9,7 +9,9 @@
     z-index: 0;
 }
 
-/* Canvas Three.js au-dessus de la vidéo */
+/* ========================
+   Canvas Three.js
+   ======================== */
 canvas {
     position: fixed;
     top: 0;
@@ -20,8 +22,21 @@ canvas {
     pointer-events: none; /* pour que le toucher passe sur les boutons */
 }
 
-/* Boutons */
-#takePhoto, #switchCamera {
+/* ========================
+   Boutons généraux
+   ======================== */
+.ar-button {
+    padding: 10px 20px;
+    width: 140px;
+    height: 50px;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+
+
     position: fixed;
     bottom: 20px;
     left: 50%;

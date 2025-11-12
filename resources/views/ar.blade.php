@@ -11,8 +11,8 @@
 
 <video id="video" autoplay playsinline muted></video>
 
-<button id="takePhoto">Prendre photo</button>
-<button id="switchCamera">Changer caméra</button>
+<button id="takePhoto" class="ar-button">Prendre photo</button>
+<button id="switchCamera" class="ar-button">Changer caméra</button>
 
 <script src="{{ asset('js/ar.js') }}"></script>
 </body>
