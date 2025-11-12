@@ -1,31 +1,34 @@
-body {
-  margin: 0;
-  overflow: hidden;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
+/* Vidéo en plein écran avec crop automatique */
+#video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover; /* remplit et rogne si nécessaire */
+    z-index: 0;
 }
 
+/* Canvas Three.js au-dessus de la vidéo */
 canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: block;
-  z-index: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none; /* pour que le toucher passe sur les boutons */
 }
 
-#takePhoto {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  padding: 12px 20px;
-  font-size: 18px;
-  background-color: rgba(192, 27, 27, 0.8);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+/* Boutons */
+#takePhoto, #switchCamera {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 5px;
+    background-color: rgb(206, 23, 23);
 }
