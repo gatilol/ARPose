@@ -12,7 +12,7 @@
 <button id="takePhoto">Prendre photo</button>
 
 <script>
-let scene, camera, renderer, model;
+let scene, camera, renderer, model, videoPlane;
 
 init();
 animate();
@@ -40,7 +40,7 @@ function init() {
   light.position.set(0.5,1,0.25);
   scene.add(light);
 
-  // Charger le modèle 3D
+  // Charger modèle 3D
   const loader = new THREE.GLTFLoader();
   loader.load('{{ asset("models/human_model.glb") }}', function(gltf) {
     model = gltf.scene;
@@ -49,7 +49,7 @@ function init() {
     scene.add(model);
   });
 
-  // Bouton pour prendre photo
+  // Bouton prendre photo
   document.getElementById('takePhoto').addEventListener('click', () => {
     renderer.render(scene, camera);
     renderer.domElement.toBlob(blob => {
@@ -63,13 +63,9 @@ function init() {
   });
 
   // Resize
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
+  window.addEventListener('resize', updateVideoPlaneSize);
 
-  // Caméra arrière du smartphone
+  // Caméra arrière
   navigator.mediaDevices.getUserMedia({
     video: { facingMode: { ideal: "environment" } },
     audio: false
@@ -89,17 +85,32 @@ function init() {
           videoTexture.magFilter = THREE.LinearFilter;
           videoTexture.format = THREE.RGBFormat;
 
-          // Plan vidéo large pour “maximiser” l’écran
-          const geometry = new THREE.PlaneGeometry(5, 5); // très large pour couvrir le plus possible
+          // Plan vidéo initial
+          const geometry = new THREE.PlaneGeometry(1,1);
           const material = new THREE.MeshBasicMaterial({ map: videoTexture });
-          const plane = new THREE.Mesh(geometry, material);
-          plane.position.z = -2; // derrière le modèle
-          scene.add(plane);
+          videoPlane = new THREE.Mesh(geometry, material);
+          videoPlane.position.z = -2; // derrière le modèle
+          scene.add(videoPlane);
+
+          // Ajuster la taille du plan pour remplir l’écran
+          updateVideoPlaneSize();
       };
   })
   .catch(err => {
       console.error("Erreur caméra:", err);
   });
+}
+
+// Fonction pour ajuster la taille du plan vidéo
+function updateVideoPlaneSize() {
+  if (!videoPlane) return;
+
+  const distance = Math.abs(videoPlane.position.z - camera.position.z);
+  const fov = camera.fov * (Math.PI / 180);
+  const height = 2 * distance * Math.tan(fov/2);
+  const width = height * (window.innerWidth / window.innerHeight);
+
+  videoPlane.geometry = new THREE.PlaneGeometry(width, height);
 }
 
 function animate() {
