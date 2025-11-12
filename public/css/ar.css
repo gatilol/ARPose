@@ -41,9 +41,26 @@ canvas {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
-    padding: 10px 20px;
-    font-size: 16px;
-    margin: 5px;
-    background-color: rgb(206, 23, 23);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+
+
+
+/* ========================
+   Bouton spécifique : Prendre photo
+   ======================== */
+#takePhoto {
+    background-color: #28a745; /* vert */
+    bottom: 70px;
+    
+}
+
+/* ========================
+   Bouton spécifique : Changer caméra
+   ======================== */
+#switchCamera {
+    background-color: #ffc107; /* jaune */
 }
