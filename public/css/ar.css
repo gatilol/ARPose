@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 0;
+}
+
+#takePhoto {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 12px 20px;
+  font-size: 18px;
+  background-color: rgba(192, 27, 27, 0.8);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
