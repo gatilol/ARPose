@@ -31,17 +31,56 @@ function init() {
 
     // Bouton photo
     document.getElementById('takePhoto').addEventListener('click', () => {
+        const video = document.getElementById('video');
+        
+        // Créer un canvas temporaire pour combiner vidéo + 3D
+        const canvas = document.createElement('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+        
+        // Calculer les dimensions pour "object-fit: cover" (comme la vidéo CSS)
+        const videoRatio = video.videoWidth / video.videoHeight;
+        const canvasRatio = canvas.width / canvas.height;
+        
+        let drawWidth, drawHeight, drawX, drawY;
+        
+        if (videoRatio > canvasRatio) {
+            // Vidéo plus large : on rogne les côtés
+            drawHeight = canvas.height;
+            drawWidth = drawHeight * videoRatio;
+            drawX = (canvas.width - drawWidth) / 2;
+            drawY = 0;
+        } else {
+            // Vidéo plus haute : on rogne le haut/bas
+            drawWidth = canvas.width;
+            drawHeight = drawWidth / videoRatio;
+            drawX = 0;
+            drawY = (canvas.height - drawHeight) / 2;
+        }
+        
+        // 1. Dessiner la vidéo avec le bon ratio (cover)
+        ctx.drawImage(video, drawX, drawY, drawWidth, drawHeight);
+        
+        // 2. Rendre la scène 3D
         renderer.render(scene, camera);
-        renderer.domElement.toBlob(blob => {
+        
+        // 3. Dessiner le rendu 3D par-dessus la vidéo
+        ctx.drawImage(renderer.domElement, 0, 0, canvas.width, canvas.height);
+        
+        // 4. Télécharger l'image combinée
+        canvas.toBlob(blob => {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
             a.download = `ar_photo_${timestamp}.png`;
             a.click();
+            URL.revokeObjectURL(url);
         });
     });
 
+    
     // Bouton switch caméra
     document.getElementById('switchCamera').addEventListener('click', () => {
         currentFacing = (currentFacing === 'environment') ? 'user' : 'environment';
